@@ -1,0 +1,29 @@
+version: '2'
+services:
+  nginx: 
+    image: nginx:1.18.0
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+      - ./yii2-app:/app:delegated
+  yii2:
+    build:
+      context: .
+      dockerfile: Yii2.Dockerfile
+    volumes:
+      - ./yii2-app:/app:delegated
+  mysql:
+    image: mariadb:10.9.3
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: metallica
+      MYSQL_USER: metallica
+      MYSQL_PASSWORD: vagrant
+    volumes:
+      - yii2-mysql-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+volumes:
+  yii2-mysql-data: {}
